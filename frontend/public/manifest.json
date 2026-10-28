@@ -1,0 +1,20 @@
+{
+  "short_name": "Cari Takip",
+  "name": "ApexCari Portföy Demosu",
+  "icons": [
+    {
+      "src": "apexcari-icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "apexcari-icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#132d40",
+  "background_color": "#f3f6f9"
+}

@@ -1,0 +1,26 @@
+{
+  "scripts": {
+    "start": "node server.js",
+    "create-admin": "node scripts/create-admin.js",
+    "test": "node --test tests/*.test.js",
+    "demo:setup": "node scripts/demo-setup.js",
+    "demo:seed": "node scripts/seed-demo.js"
+  },
+  "dependencies": {
+    "argon2": "^0.44.0",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.2",
+    "mongodb": "^7.2.0",
+    "mongoose": "^9.6.1"
+  },
+  "name": "apexcari-demo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Customer ledger and ticket payment tracking portfolio demo",
+  "engines": {
+    "node": ">=22"
+  }
+}
