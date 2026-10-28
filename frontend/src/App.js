@@ -288,7 +288,7 @@ export default function App() {
         <div className="login-card">
           <div className="brand-mark">↗</div>
           <p className="eyebrow">ACENTE CARİ TAKİP</p>
-          <h1>Cari Takip</h1>
+          <h1>Acenteler İçin Cari Hesap Tutumu</h1>
           <p className="muted">
             Portföy demosu — yalnızca hayalî örnek veriler.
           </p>
@@ -335,7 +335,7 @@ export default function App() {
         <div className="brand">
           <span className="brand-mark">↗</span>
           <div>
-            Cari Takip<small>Portföy demosu · Örnek veriler</small>
+            Cari Hesap<small>Acenteler için · Portföy demosu</small>
           </div>
         </div>
         <nav>

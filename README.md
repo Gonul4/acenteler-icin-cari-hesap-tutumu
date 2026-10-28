@@ -1,4 +1,4 @@
-# ApexCari — Cari Hesap ve Bilet Takip Sistemi
+# Acenteler İçin Cari Hesap Tutumu
 
 React, Express ve MongoDB ile geliştirilmiş müşteri kartı, bilet borcu, bağımsız tahsilat ve ödeme tarihi takip uygulaması.
 
@@ -6,7 +6,7 @@ React, Express ve MongoDB ile geliştirilmiş müşteri kartı, bilet borcu, ba�
 
 ## Çözülen problem
 
-Bir müşterinin birden fazla bilet borcu ve biletten bağımsız ödemesi olabilir. ApexCari bu hareketleri sabit numaralı müşteri kartında toplar; borç, alacak, avans ve POS komisyonunu ayrı izler. Ödeme günü gelen açık borçlar ana sayfada görünür.
+Bir müşterinin birden fazla bilet borcu ve biletten bağımsız ödemesi olabilir. Uygulama bu hareketleri sabit numaralı müşteri kartında toplar; borç, alacak, avans ve POS komisyonunu ayrı izler. Ödeme günü gelen açık borçlar ana sayfada görünür.
 
 ## Özellikler
 
@@ -59,8 +59,8 @@ docs/images/    Hayalî verilerle hazırlanmış ekran görüntüleri
 Gerekenler: Node.js 22 veya üzeri, npm ve çalışan Docker Compose. Demo MongoDB ayrı bir yerel Docker biriminde tutulur.
 
 ```bash
-git clone https://github.com/Gonul4/apexcari-demo.git
-cd apexcari-demo
+git clone https://github.com/Gonul4/acenteler-icin-cari-hesap-tutumu.git
+cd acenteler-icin-cari-hesap-tutumu
 npm ci
 npm ci --prefix frontend
 npm run demo:setup

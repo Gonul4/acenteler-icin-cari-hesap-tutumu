@@ -16,7 +16,7 @@
     "mongodb": "^7.2.0",
     "mongoose": "^9.6.1"
   },
-  "name": "apexcari-demo",
+  "name": "acenteler-icin-cari-hesap-tutumu",
   "version": "1.0.0",
   "private": true,
   "description": "Customer ledger and ticket payment tracking portfolio demo",
