@@ -1,0 +1,50 @@
+import { localDemoApi as api, resetLocalDemo } from "./localDemo";
+const uuid = (n) => `00000000-0000-4000-8000-${String(n).padStart(12, "0")}`;
+beforeEach(() => {
+  localStorage.clear();
+  let n = 100;
+  Object.defineProperty(window, "crypto", { configurable: true, value: { randomUUID: () => uuid(n++) } });
+  resetLocalDemo();
+});
+test("local demo starts with sample net POS balances and resets only its own storage", async () => {
+  const cards = (await api.get("/customers")).data;
+  expect(cards).toHaveLength(3);
+  expect(cards[0].summary.balanceCents).toBe(-706000);
+  expect(cards[0].paymentSchedule[0].remainingCents).toBe(706000);
+  localStorage.setItem("unrelated-data", "keep");
+  resetLocalDemo();
+  expect(localStorage.getItem("unrelated-data")).toBe("keep");
+});
+test("offline customer, due ticket and idempotent POS collection persist across reloads", async () => {
+  const card = (await api.request({ url: "/customers", method: "post", data: { name: "Hayalî Kart", defaultPosRate: 2 } })).data;
+  expect(card.code).toBe("C000004");
+  const ticket = (await api.request({ url: "/tickets", method: "post", data: { customerId: card._id, price: 8000, saleDate: "2026-10-28", dueDate: "2026-11-03" } })).data;
+  expect(ticket.dueDate).toBe("2026-11-03");
+  const payment = { type: "payment", amount: 10000, date: "2026-10-28", method: "Kart", commissionMode: "percent", commissionValue: 2, description: "Örnek tahsilat", requestId: uuid(1) };
+  await api.post(`/customers/${card._id}/entries`, payment);
+  await api.post(`/customers/${card._id}/entries`, payment);
+  let result = (await api.get(`/customers/${card._id}/statement`)).data;
+  expect(result.summary.balanceCents).toBe(180000);
+  expect(result.rows.filter((r) => r.source === "entry")).toHaveLength(1);
+  expect((await api.get("/customers")).data.find((c) => c._id === card._id).paymentSchedule).toEqual([]);
+  jest.resetModules();
+  const reloaded = require("./localDemo").localDemoApi;
+  result = (await reloaded.get(`/customers/${card._id}/statement`)).data;
+  expect(result.summary.balanceCents).toBe(180000);
+  await expect(api.post(`/customers/${card._id}/entries`, { ...payment, amount: 9000 })).rejects.toHaveProperty("response.status", 409);
+});
+test("local corrections keep history, reject stale edits and voiding recalculates reminders", async () => {
+  const card = (await api.get("/customers")).data[0];
+  const stmt = (await api.get(`/customers/${card._id}/statement`)).data;
+  const entry = stmt.rows.find((r) => r.source === "entry");
+  const url = `/customers/${card._id}/entries/${entry.sourceId}`;
+  const body = { ...entry.edit, amount: 4000, version: 0, reason: "Örnek düzeltme" };
+  const changed = (await api.request({ url, method: "put", data: body })).data;
+  expect(changed.history[0].before.amountCents).toBe(300000);
+  expect(changed.history[0].after.amountCents).toBe(400000);
+  await expect(api.request({ url, method: "put", data: body })).rejects.toHaveProperty("response.status", 409);
+  await api.post(`${url}/void`, { reason: "Örnek iptal" });
+  const cards = (await api.get("/customers")).data;
+  expect(cards[0].summary.balanceCents).toBe(-1000000);
+  expect(cards[0].paymentSchedule[0].remainingCents).toBe(1000000);
+});

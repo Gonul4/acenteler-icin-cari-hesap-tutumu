@@ -4,7 +4,8 @@
     "create-admin": "node scripts/create-admin.js",
     "test": "node --test tests/*.test.js",
     "demo:setup": "node scripts/demo-setup.js",
-    "demo:seed": "node scripts/seed-demo.js"
+    "demo:seed": "node scripts/seed-demo.js",
+    "demo:build": "node scripts/build-standalone.js"
   },
   "dependencies": {
     "argon2": "^0.44.0",

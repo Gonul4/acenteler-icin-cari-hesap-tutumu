@@ -3,12 +3,14 @@ import axios from "axios";
 import CustomerWorkspace, { Dialog } from "./CustomerWorkspace";
 import "./App.css";
 import AccountSettings from "./AccountSettings";
+import { localDemoApi, resetLocalDemo, localStorageAvailable } from "./localDemo";
+const LOCAL_DEMO = process.env.REACT_APP_LOCAL_DEMO === "true";
 const API_ROOT =
   process.env.REACT_APP_API_URL ||
   (["localhost", "127.0.0.1"].includes(window.location.hostname)
     ? `http://${window.location.hostname}:5000/api`
     : "/api");
-const api = axios.create({
+const api = LOCAL_DEMO ? localDemoApi : axios.create({
   baseURL: API_ROOT,
   withCredentials: true,
   timeout: 20000,
@@ -345,7 +347,7 @@ export default function App() {
           >
             ▤ Müşteri kartları
           </button>
-          {user.role === "admin" && (
+          {!LOCAL_DEMO && user.role === "admin" && (
             <button
               className={section === "users" ? "nav-active" : ""}
               onClick={() => setSection("users")}
@@ -353,7 +355,7 @@ export default function App() {
               ♙ Çalışan hesapları
             </button>
           )}
-          <button className={section === "account" ? "nav-active" : ""} onClick={() => setSection("account")}>Hesap ayarları</button>
+          {!LOCAL_DEMO && <button className={section === "account" ? "nav-active" : ""} onClick={() => setSection("account")}>Hesap ayarları</button>}
         </nav>
         <p className="sidebar-note">
           Her müşteriye bir kart.
@@ -365,12 +367,21 @@ export default function App() {
           <small>
             {user.role === "admin" ? "Yönetici / Muhasebe" : "Çalışan"}
           </small>
-          <button disabled={busy} onClick={logout}>
+          {LOCAL_DEMO ? <button onClick={() => {
+            if (window.confirm("Bu tarayıcıdaki demo değişiklikleri silinip örnekler yeniden yüklensin mi?")) {
+              resetLocalDemo(); window.location.reload();
+            }
+          }}>Örnekleri sıfırla</button> : <button disabled={busy} onClick={logout}>
             Çıkış yap
-          </button>
+          </button>}
         </div>
       </aside>
       <main className="workspace">
+        {LOCAL_DEMO && <div className="message local-demo-notice">
+          <strong>Acenteler İçin Cari Hesap Tutumu · Yerel demo</strong>
+          <p>Kurulum ve internet bağlantısı gerektirmez. Yalnızca hayalî örnekler kullanın; gerçek müşteri veya parola girmeyin.</p>
+          <small>{localStorageAvailable() ? "Değişiklikler bu cihazın tarayıcısında tutulur; HTML dosyasına yazılmaz. Dosyayı başka kişiye gönderince yalnızca başlangıç örnekleri açılır." : "Bu dosya görüntüleyicisi kalıcı depolamaya izin vermiyor. Değişiklikler sayfa açıkken tutulur."}</small>
+        </div>}
         {error && (
           <div className="message error" role="alert">
             {error}
